@@ -25,6 +25,43 @@ Para cada candle mais recente, o bot calcula 4 sinais e soma um score de -4 a +4
 - Score **<= -2** → `VENDER`
 - Caso contrario → `AGUARDAR`
 
+## Gestao de risco (stop-loss, take-profit e position sizing)
+
+Sempre que o sinal for `COMPRAR` e um `--capital` for informado, o bot monta
+um plano de risco em `risk.py`:
+
+- **Stop-loss**: `entrada - (ATR(14) * --atr-mult)`. Usar o ATR em vez de uma
+  % fixa faz o stop respeitar a volatilidade real do ativo naquele momento.
+- **Take-profit**: a distancia do stop multiplicada pela relacao risco:retorno
+  (`--rr`, default 1:2).
+- **Tamanho da posicao**: calculado para que, se o stop for atingido, a perda
+  seja exatamente `--risk-pct`% do capital informado (nunca aloca mais que
+  100% do capital, mesmo com stops apertados).
+
+O backtest (`--backtest`) usa o mesmo plano de risco: cada trade simulado
+entra com o tamanho calculado e sai automaticamente no stop-loss, no
+take-profit ou quando o score de sinal virar `VENDER` — o que vier primeiro.
+
+## Alertas no Telegram
+
+1. Crie um bot com [@BotFather](https://t.me/BotFather) e copie o token.
+2. Mande uma mensagem para o bot e acesse
+   `https://api.telegram.org/bot<TOKEN>/getUpdates` para pegar o `chat.id`.
+3. Exporte as credenciais (ou passe via `--telegram-token`/`--telegram-chat-id`):
+
+```bash
+export TELEGRAM_BOT_TOKEN="123456:ABC..."
+export TELEGRAM_CHAT_ID="987654321"
+```
+
+4. Rode com `--telegram` — um alerta e enviado toda vez que um sinal
+   `COMPRAR` ou `VENDER` aparecer (sinais `AGUARDAR` nao geram alerta, para
+   evitar spam):
+
+```bash
+python bot.py BTCUSDT ETHUSDT --watch --every 300 --telegram --capital 1000 --risk-pct 1
+```
+
 ## Instalacao
 
 ```bash
@@ -51,7 +88,7 @@ python bot.py BTCUSDT ETHUSDT --interval 15m --watch --every 300
 Backtest da estrategia sobre dados historicos (compara com buy & hold):
 
 ```bash
-python bot.py BTCUSDT --backtest --interval 1h --limit 500 --capital 1000
+python bot.py BTCUSDT --backtest --interval 1h --limit 500 --capital 1000 --risk-pct 1 --rr 2
 ```
 
 ### Parametros
@@ -64,17 +101,24 @@ python bot.py BTCUSDT --backtest --interval 1h --limit 500 --capital 1000
 | `--watch` | Roda em loop continuo | desligado |
 | `--every` | Segundos entre analises no modo `--watch` | `300` |
 | `--backtest` | Roda um backtest em vez de analise ao vivo | desligado |
-| `--capital` | Capital inicial simulado no backtest | `1000` |
+| `--capital` | Capital disponivel (position sizing na analise ao vivo e no backtest) | `1000` |
+| `--risk-pct` | % do capital arriscado por trade | `1.0` |
+| `--atr-mult` | Distancia do stop-loss em multiplos do ATR(14) | `1.5` |
+| `--rr` | Relacao risco:retorno do take-profit | `2.0` |
+| `--telegram` | Envia sinais COMPRAR/VENDER como alerta no Telegram | desligado |
+| `--telegram-token` / `--telegram-chat-id` | Credenciais do bot (ou env vars) | — |
 
 ## Estrutura
 
 ```
 crypto-bot/
-├── bot.py          # CLI principal
-├── data.py         # busca de candles (Binance REST publica)
-├── indicators.py   # SMA, EMA, RSI, MACD, Bandas de Bollinger
-├── strategy.py      # regras de score -> COMPRAR/VENDER/AGUARDAR
-├── backtest.py      # simulacao historica da estrategia vs buy&hold
+├── bot.py              # CLI principal
+├── data.py             # busca de candles (Binance REST publica)
+├── indicators.py       # SMA, EMA, RSI, MACD, Bandas de Bollinger, ATR
+├── strategy.py         # regras de score -> COMPRAR/VENDER/AGUARDAR
+├── risk.py             # stop-loss/take-profit por ATR + position sizing
+├── backtest.py         # simulacao historica da estrategia vs buy&hold
+├── telegram_alerts.py  # alertas via Telegram Bot API
 └── requirements.txt
 ```
 
@@ -86,5 +130,5 @@ crypto-bot/
   noticias, fundamentos on-chain, liquidez ou eventos macro.
 - Backtest nao contabiliza taxas de corretagem, slippage nem impostos; retorno
   real de uma operacao ao vivo tende a ser pior que o simulado.
-- Sem gestao de risco (stop loss, position sizing, take profit) — adicione
-  antes de usar com dinheiro real.
+- Gestao de risco assume operacao spot long-only, sem alavancagem; nao ha
+  suporte a venda a descoberto (short).

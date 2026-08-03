@@ -43,8 +43,24 @@ def bollinger_bands(series: pd.Series, window: int = 20, num_std: float = 2.0):
     return upper, mid, lower
 
 
+def atr(df: pd.DataFrame, window: int = 14) -> pd.Series:
+    """Average True Range - usado para dimensionar stop-loss de acordo com a
+    volatilidade real do ativo (mais robusto que uma % fixa de stop)."""
+    high, low, close = df["high"], df["low"], df["close"]
+    prev_close = close.shift(1)
+    true_range = pd.concat(
+        [
+            high - low,
+            (high - prev_close).abs(),
+            (low - prev_close).abs(),
+        ],
+        axis=1,
+    ).max(axis=1)
+    return true_range.ewm(alpha=1 / window, min_periods=window, adjust=False).mean()
+
+
 def add_all_indicators(df: pd.DataFrame) -> pd.DataFrame:
-    """Recebe um DataFrame com coluna 'close' e adiciona colunas de indicadores."""
+    """Recebe um DataFrame com colunas 'high','low','close' e adiciona indicadores."""
     out = df.copy()
     out["sma_fast"] = sma(out["close"], 9)
     out["sma_slow"] = sma(out["close"], 21)
@@ -59,4 +75,5 @@ def add_all_indicators(df: pd.DataFrame) -> pd.DataFrame:
     out["bb_upper"] = upper
     out["bb_mid"] = mid
     out["bb_lower"] = lower
+    out["atr"] = atr(out, 14)
     return out

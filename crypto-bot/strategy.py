@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 import pandas as pd
 
 from indicators import add_all_indicators
+from risk import RiskPlan, build_risk_plan
 
 BUY_THRESHOLD = 2
 SELL_THRESHOLD = -2
@@ -24,6 +25,7 @@ class Signal:
     action: str  # "COMPRAR" | "VENDER" | "AGUARDAR"
     reasons: list[str] = field(default_factory=list)
     indicators: dict = field(default_factory=dict)
+    risk_plan: RiskPlan | None = None
 
 
 def _trend_score(row, reasons: list[str]) -> int:
@@ -65,8 +67,21 @@ def _bollinger_score(row, reasons: list[str]) -> int:
     return 0
 
 
-def generate_signal(symbol: str, df: pd.DataFrame) -> Signal:
-    """Recebe OHLCV (coluna 'close' obrigatoria) e devolve um Signal com o sinal atual."""
+def generate_signal(
+    symbol: str,
+    df: pd.DataFrame,
+    capital: float | None = None,
+    risk_pct: float = 1.0,
+    atr_mult_stop: float = 1.5,
+    reward_risk_ratio: float = 2.0,
+) -> Signal:
+    """Recebe OHLCV (colunas 'high','low','close' obrigatorias) e devolve um
+    Signal com o sinal atual.
+
+    Se `capital` for informado e o sinal for COMPRAR, tambem monta um
+    RiskPlan (stop-loss, take-profit e tamanho de posicao) arriscando
+    `risk_pct`% do capital, com stop a `atr_mult_stop` * ATR de distancia.
+    """
     enriched = add_all_indicators(df)
     row = enriched.iloc[-1]
 
@@ -91,6 +106,17 @@ def generate_signal(symbol: str, df: pd.DataFrame) -> Signal:
     else:
         action = "AGUARDAR"
 
+    risk_plan = None
+    if action == "COMPRAR" and capital is not None and not pd.isna(row["atr"]):
+        risk_plan = build_risk_plan(
+            capital=capital,
+            entry_price=float(row["close"]),
+            atr=float(row["atr"]),
+            risk_pct=risk_pct,
+            atr_mult_stop=atr_mult_stop,
+            reward_risk_ratio=reward_risk_ratio,
+        )
+
     return Signal(
         symbol=symbol.upper(),
         price=float(row["close"]),
@@ -105,5 +131,7 @@ def generate_signal(symbol: str, df: pd.DataFrame) -> Signal:
             "macd_signal": round(float(row["macd_signal"]), 4),
             "bb_upper": round(float(row["bb_upper"]), 4),
             "bb_lower": round(float(row["bb_lower"]), 4),
+            "atr": round(float(row["atr"]), 4) if not pd.isna(row["atr"]) else None,
         },
+        risk_plan=risk_plan,
     )
