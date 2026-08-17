@@ -10,8 +10,13 @@ venv/
 # Mídia gerada (pesada, não versionar)
 media/raw/*
 media/final/*
+media/musica/*
 !media/raw/.gitkeep
 !media/final/.gitkeep
+!media/musica/.gitkeep
+
+# Vídeos de teste soltos na raiz (não fazem parte do código)
+/teste_pipeline_*.mp4
 
 # Dados locais / logs
 data/*.db

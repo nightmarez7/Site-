@@ -6,7 +6,11 @@
     "descricao_visual": "mulher jovem de 24 anos, estilo 3D animado tipo Pixar/Disney, cabelo cacheado ruivo vibrante até os ombros, olhos verdes grandes e expressivos, sardas leves, veste jaqueta jeans sobre top branco, expressão sempre intensa e emotiva",
     "personalidade": "sonhadora, teimosa, corajosa, fala o que pensa e se mete em confusão por impulsividade",
     "voz_estilo": "jovem, energética, tom que sobe quando fica emocionada ou brava",
-    "cor_legenda": "#FF4D6D"
+    "cor_legenda": "#FF4D6D",
+    "voz_id": "EXAVITQu4vr4xnSDxMaL",
+    "voz_estabilidade": 0.35,
+    "voz_exagero": 0.45,
+    "voz_similaridade": 0.75
   },
   {
     "id": "rafael",
@@ -15,7 +19,11 @@
     "descricao_visual": "homem de 27 anos, estilo 3D animado tipo Pixar/Disney, cabelo preto curto levemente bagunçado, mandíbula marcada, veste moletom azul-marinho, olhar que alterna entre charmoso e culpado",
     "personalidade": "charmoso, indeciso, esconde segredos, se justifica em vez de assumir erros",
     "voz_estilo": "grave, calmo por fora, mas com hesitação perceptível nos momentos de mentira",
-    "cor_legenda": "#4D9DFF"
+    "cor_legenda": "#4D9DFF",
+    "voz_id": "ErXwobaYiN019PkySvjV",
+    "voz_estabilidade": 0.55,
+    "voz_exagero": 0.25,
+    "voz_similaridade": 0.75
   },
   {
     "id": "marina",
@@ -24,7 +32,11 @@
     "descricao_visual": "mulher de 25 anos, estilo 3D animado tipo Pixar/Disney, cabelo loiro platinado liso e longo, maquiagem sempre impecável, veste roupas de grife e joias chamativas, sorriso que nunca alcança os olhos",
     "personalidade": "manipuladora nos bastidores, doce na aparência, guarda inveja disfarçada de amizade",
     "voz_estilo": "suave e melodioso, com uma ironia sutil escondida no tom",
-    "cor_legenda": "#FFD24D"
+    "cor_legenda": "#FFD24D",
+    "voz_id": "21m00Tcm4TlvDq8ikWAM",
+    "voz_estabilidade": 0.6,
+    "voz_exagero": 0.2,
+    "voz_similaridade": 0.75
   },
   {
     "id": "dona_celia",
@@ -33,6 +45,10 @@
     "descricao_visual": "senhora de 58 anos, estilo 3D animado tipo Pixar/Disney, cabelo grisalho curto arrumado, óculos de leitura pendurados no pescoço, veste avental floral, gestos exagerados com as mãos",
     "personalidade": "dramática, opinativa, ama um bom fofoca, mas defende a filha (Bianca) com unhas e dentes",
     "voz_estilo": "alto, cadenciado, cheio de exclamações e suspiros teatrais",
-    "cor_legenda": "#9D4DFF"
+    "cor_legenda": "#9D4DFF",
+    "voz_id": "MF3mGyEYCl7XYWbV9V6O",
+    "voz_estabilidade": 0.3,
+    "voz_exagero": 0.6,
+    "voz_similaridade": 0.75
   }
 ]

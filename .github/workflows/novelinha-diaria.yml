@@ -1,0 +1,69 @@
+name: Novelinha diária
+
+on:
+  schedule:
+    - cron: "0 15 * * *" # 12:00 (America/Sao_Paulo, UTC-3) todos os dias
+  workflow_dispatch:
+    inputs:
+      parte:
+        description: "Forçar um número de parte específico (opcional)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  gerar-episodio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Rodar pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ secrets.ANTHROPIC_MODEL }}
+          RUNWAY_API_KEY: ${{ secrets.RUNWAY_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
+          TIKTOK_PRIVACY_LEVEL: ${{ secrets.TIKTOK_PRIVACY_LEVEL }}
+        run: |
+          if [ -n "${{ github.event.inputs.parte }}" ]; then
+            python main.py --parte "${{ github.event.inputs.parte }}"
+          else
+            python main.py
+          fi
+
+      - name: Enviar vídeo final como artefato
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: episodio-${{ github.run_id }}
+          path: media/final/*.mp4
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Persistir fila de episódios (continuidade entre execuções)
+        if: always()
+        run: |
+          if ! git diff --quiet -- data/episodios.json; then
+            git config user.name "novelinha-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add data/episodios.json
+            git commit -m "chore: registra episódio gerado em $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push
+          else
+            echo "Nada novo em data/episodios.json para commitar."
+          fi

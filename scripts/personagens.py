@@ -17,6 +17,10 @@ class Personagem(BaseModel):
     personalidade: str
     voz_estilo: str
     cor_legenda: str
+    voz_id: str
+    voz_estabilidade: float = 0.5
+    voz_exagero: float = 0.3
+    voz_similaridade: float = 0.75
 
 
 def carregar_personagens() -> list[Personagem]:

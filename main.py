@@ -3,9 +3,8 @@
 Uso:
     python main.py [--parte N]
 
-Hoje só a Etapa 1 (geração de roteiro) está implementada. As demais etapas
-(imagem/vídeo, narração, montagem, postagem) entram nos próximos passos e
-serão encadeadas aqui mesmo.
+Pipeline completo: roteiro -> imagem/vídeo por cena -> narração -> montagem
+final -> postagem no TikTok (ou salvamento para postagem manual).
 """
 
 from __future__ import annotations
@@ -16,7 +15,10 @@ import sys
 from scripts import fila
 from scripts.geracao_midia import gerar_midia_do_roteiro
 from scripts.logger import get_logger
+from scripts.montagem import montar_video_final
+from scripts.narracao import gerar_narracao_do_roteiro
 from scripts.roteiro_generator import gerar_roteiro, salvar_roteiro
+from scripts.tiktok_poster import publicar_ou_salvar
 
 logger = get_logger("main")
 
@@ -40,7 +42,7 @@ def main() -> int:
     # Etapa 1: roteiro
     try:
         roteiro = gerar_roteiro(numero_parte=args.parte)
-        caminho_roteiro = salvar_roteiro(roteiro)
+        salvar_roteiro(roteiro)
     except Exception:
         logger.exception("Falha na Etapa 1 (geração de roteiro). Abortando execução.")
         return 1
@@ -54,16 +56,34 @@ def main() -> int:
         logger.exception("Falha na Etapa 2 (geração de imagem/vídeo). Abortando execução.")
         return 1
 
-    # Etapa 3: narração/TTS — TODO
-    logger.info("Etapa 3 (narração/TTS) ainda não implementada.")
+    # Etapa 3: narração/TTS
+    try:
+        narracoes = gerar_narracao_do_roteiro(roteiro)
+        fila.atualizar_status(roteiro.numero_parte, "narracao_gerada")
+        logger.info("Etapa 3 concluída: %s narrações geradas.", len(narracoes))
+    except Exception:
+        logger.exception("Falha na Etapa 3 (narração/TTS). Abortando execução.")
+        return 1
 
-    # Etapa 4: montagem final (moviepy/ffmpeg) — TODO
-    logger.info("Etapa 4 (montagem final) ainda não implementada.")
+    # Etapa 4: montagem final (moviepy/ffmpeg)
+    try:
+        caminho_video = montar_video_final(roteiro, midias, narracoes)
+        fila.atualizar_status(roteiro.numero_parte, "video_montado")
+        logger.info("Etapa 4 concluída: vídeo final em %s", caminho_video)
+    except Exception:
+        logger.exception("Falha na Etapa 4 (montagem final). Abortando execução.")
+        return 1
 
-    # Etapa 5: postagem no TikTok — TODO
-    logger.info("Etapa 5 (postagem no TikTok) ainda não implementada.")
+    # Etapa 5: postagem no TikTok (ou salvamento para postagem manual)
+    try:
+        resultado_postagem = publicar_ou_salvar(roteiro, caminho_video)
+        fila.atualizar_status(roteiro.numero_parte, resultado_postagem["status"])
+        logger.info("Etapa 5 concluída: %s", resultado_postagem)
+    except Exception:
+        logger.exception("Falha na Etapa 5 (postagem no TikTok). O vídeo final continua em %s", caminho_video)
+        return 1
 
-    logger.info("=== Fim da execução: roteiro pronto em %s ===", caminho_roteiro)
+    logger.info("=== Fim da execução: episódio %s pronto em %s ===", roteiro.numero_parte, caminho_video)
     return 0
 
 

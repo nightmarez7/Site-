@@ -55,3 +55,27 @@ RUNWAY_POLL_TIMEOUT_SEGUNDOS = int(os.getenv("RUNWAY_POLL_TIMEOUT_SEGUNDOS", "30
 
 # "imagem": 1 imagem estática por cena (rápido/barato). "video": anima cada imagem em um clipe curto.
 MIDIA_TIPO = os.getenv("MIDIA_TIPO", "imagem")
+
+# Etapa 3: narração (provedor: ElevenLabs)
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
+ELEVENLABS_BASE_URL = os.getenv("ELEVENLABS_BASE_URL", "https://api.elevenlabs.io/v1")
+ELEVENLABS_MODEL = os.getenv("ELEVENLABS_MODEL", "eleven_multilingual_v2")
+
+# Etapa 4: montagem final
+FONTE_LEGENDA_PATH = os.getenv("FONTE_LEGENDA_PATH", "")
+TAMANHO_FONTE_LEGENDA = int(os.getenv("TAMANHO_FONTE_LEGENDA", "72"))
+MUSICA_FUNDO_DIR = BASE_DIR / "media" / "musica"
+MUSICA_FUNDO_DIR.mkdir(parents=True, exist_ok=True)
+MUSICA_FUNDO_VOLUME = float(os.getenv("MUSICA_FUNDO_VOLUME", "0.15"))
+VIDEO_FPS = int(os.getenv("VIDEO_FPS", "30"))
+
+# Etapa 5: postagem no TikTok
+TIKTOK_CLIENT_KEY = os.getenv("TIKTOK_CLIENT_KEY", "")
+TIKTOK_CLIENT_SECRET = os.getenv("TIKTOK_CLIENT_SECRET", "")
+TIKTOK_ACCESS_TOKEN = os.getenv("TIKTOK_ACCESS_TOKEN", "")
+TIKTOK_BASE_URL = os.getenv("TIKTOK_BASE_URL", "https://open.tiktokapis.com/v2")
+# Privacidade do post: por segurança o padrão é privado (só você vê). Troque explicitamente
+# para "PUBLIC_TO_EVERYONE" no .env quando quiser que o bot publique de fato em público.
+TIKTOK_PRIVACY_LEVEL = os.getenv("TIKTOK_PRIVACY_LEVEL", "SELF_ONLY")
+PASTA_POSTAGEM_MANUAL = Path(os.getenv("PASTA_POSTAGEM_MANUAL", str(MEDIA_FINAL_DIR)))
+PASTA_POSTAGEM_MANUAL.mkdir(parents=True, exist_ok=True)
