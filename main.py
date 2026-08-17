@@ -13,6 +13,8 @@ from __future__ import annotations
 import argparse
 import sys
 
+from scripts import fila
+from scripts.geracao_midia import gerar_midia_do_roteiro
 from scripts.logger import get_logger
 from scripts.roteiro_generator import gerar_roteiro, salvar_roteiro
 
@@ -43,8 +45,14 @@ def main() -> int:
         logger.exception("Falha na Etapa 1 (geração de roteiro). Abortando execução.")
         return 1
 
-    # Etapa 2: geração de imagem/vídeo por cena — TODO
-    logger.info("Etapa 2 (imagem/vídeo) ainda não implementada.")
+    # Etapa 2: geração de imagem/vídeo por cena
+    try:
+        midias = gerar_midia_do_roteiro(roteiro)
+        fila.atualizar_status(roteiro.numero_parte, "midia_gerada")
+        logger.info("Etapa 2 concluída: %s arquivos de mídia gerados.", len(midias))
+    except Exception:
+        logger.exception("Falha na Etapa 2 (geração de imagem/vídeo). Abortando execução.")
+        return 1
 
     # Etapa 3: narração/TTS — TODO
     logger.info("Etapa 3 (narração/TTS) ainda não implementada.")

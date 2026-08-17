@@ -37,6 +37,15 @@ def contexto_capitulo_anterior() -> str | None:
     return ultimo.get("resumo_capitulo")
 
 
+def atualizar_status(numero_parte: int, status: str) -> None:
+    episodios = _carregar()
+    for episodio in episodios:
+        if episodio["numero_parte"] == numero_parte:
+            episodio["status"] = status
+            break
+    _salvar(episodios)
+
+
 def registrar_episodio(
     numero_parte: int,
     titulo: str,
