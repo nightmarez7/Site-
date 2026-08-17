@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Segredos
+.env
+
+# Mídia gerada (pesada, não versionar)
+media/raw/*
+media/final/*
+!media/raw/.gitkeep
+!media/final/.gitkeep
+
+# Dados locais / logs
+data/*.db
+data/logs/*.log
+data/roteiros/*.json
+!data/roteiros/.gitkeep

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "bianca",
+    "nome": "Bianca",
+    "papel": "protagonista",
+    "descricao_visual": "mulher jovem de 24 anos, estilo 3D animado tipo Pixar/Disney, cabelo cacheado ruivo vibrante até os ombros, olhos verdes grandes e expressivos, sardas leves, veste jaqueta jeans sobre top branco, expressão sempre intensa e emotiva",
+    "personalidade": "sonhadora, teimosa, corajosa, fala o que pensa e se mete em confusão por impulsividade",
+    "voz_estilo": "jovem, energética, tom que sobe quando fica emocionada ou brava",
+    "cor_legenda": "#FF4D6D"
+  },
+  {
+    "id": "rafael",
+    "nome": "Rafael",
+    "papel": "interesse amoroso / fonte de conflito",
+    "descricao_visual": "homem de 27 anos, estilo 3D animado tipo Pixar/Disney, cabelo preto curto levemente bagunçado, mandíbula marcada, veste moletom azul-marinho, olhar que alterna entre charmoso e culpado",
+    "personalidade": "charmoso, indeciso, esconde segredos, se justifica em vez de assumir erros",
+    "voz_estilo": "grave, calmo por fora, mas com hesitação perceptível nos momentos de mentira",
+    "cor_legenda": "#4D9DFF"
+  },
+  {
+    "id": "marina",
+    "nome": "Marina",
+    "papel": "melhor amiga / rival",
+    "descricao_visual": "mulher de 25 anos, estilo 3D animado tipo Pixar/Disney, cabelo loiro platinado liso e longo, maquiagem sempre impecável, veste roupas de grife e joias chamativas, sorriso que nunca alcança os olhos",
+    "personalidade": "manipuladora nos bastidores, doce na aparência, guarda inveja disfarçada de amizade",
+    "voz_estilo": "suave e melodioso, com uma ironia sutil escondida no tom",
+    "cor_legenda": "#FFD24D"
+  },
+  {
+    "id": "dona_celia",
+    "nome": "Dona Célia",
+    "papel": "mãe / alívio cômico dramático",
+    "descricao_visual": "senhora de 58 anos, estilo 3D animado tipo Pixar/Disney, cabelo grisalho curto arrumado, óculos de leitura pendurados no pescoço, veste avental floral, gestos exagerados com as mãos",
+    "personalidade": "dramática, opinativa, ama um bom fofoca, mas defende a filha (Bianca) com unhas e dentes",
+    "voz_estilo": "alto, cadenciado, cheio de exclamações e suspiros teatrais",
+    "cor_legenda": "#9D4DFF"
+  }
+]
