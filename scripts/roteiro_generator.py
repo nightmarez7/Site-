@@ -7,10 +7,11 @@ personagens e enredo entre episódios.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import anthropic
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, field_validator
 
 from scripts import fila
 from scripts.config import (
@@ -114,6 +115,16 @@ class Roteiro(BaseModel):
     cta_final: str
     hashtags: list[str]
     cenas: list[Cena] = Field(min_length=1)
+
+    @field_validator("hashtags", mode="before")
+    @classmethod
+    def _normalizar_hashtags(cls, valor):
+        # O Claude ocasionalmente retorna uma string separada por vírgula em vez de lista
+        # (mesmo com o schema da ferramenta declarando array) e às vezes inclui pontuação
+        # solta (#, colchetes) numa hashtag — normaliza tudo para tags alfanuméricas limpas.
+        itens = valor.split(",") if isinstance(valor, str) else valor
+        limpas = [re.sub(r"[^0-9a-zA-Z_À-ÿ]", "", str(h)) for h in itens]
+        return [h for h in limpas if h]
 
     @property
     def duracao_total(self) -> float:

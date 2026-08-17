@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "numero_parte": 1,
+    "titulo": "O Casamento Que Não Devia Acontecer",
+    "resumo_capitulo": "Bianca descobre, no dia do casamento, que a noiva é Marina, sua melhor amiga, e o noivo é Rafael, o homem que ela ama. Antes que o \"sim\" seja dito, Bianca interrompe tudo jurando revelar um segredo que pode destruir a cerimônia.",
+    "arquivo_roteiro": "data/roteiros/parte_001.json",
+    "status": "roteiro_gerado",
+    "criado_em": "2026-08-17T21:11:55.568335+00:00"
+  }
+]
