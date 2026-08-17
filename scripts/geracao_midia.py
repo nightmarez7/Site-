@@ -2,7 +2,7 @@
 
 Para cada personagem, gera (e cacheia em disco) uma imagem de referência a partir
 da `descricao_visual` fixa. Toda cena desse personagem usa essa referência como
-condicionamento visual na chamada à Kling, para manter a aparência consistente
+condicionamento visual na chamada à Runway, para manter a aparência consistente
 entre cenas e entre episódios.
 """
 
@@ -16,7 +16,7 @@ from PIL import Image
 from scripts.config import ALTURA_VIDEO, LARGURA_VIDEO, MEDIA_RAW_DIR, MEDIA_RAW_PERSONAGENS_DIR, MIDIA_TIPO
 from scripts.logger import get_logger
 from scripts.personagens import Personagem, carregar_personagens
-from scripts.providers import kling
+from scripts.providers import runway
 from scripts.roteiro_generator import Roteiro
 
 logger = get_logger(__name__)
@@ -47,7 +47,7 @@ def _obter_ou_gerar_referencia(personagem: Personagem) -> Path:
         f"{personagem.descricao_visual}, personagem 3D estilo Pixar/Disney, "
         "corpo inteiro, fundo neutro, iluminação de estúdio, pose neutra de referência de personagem"
     )
-    kling.gerar_imagem(prompt, caminho)
+    runway.gerar_imagem(prompt, caminho)
     _redimensionar(caminho)
     return caminho
 
@@ -73,15 +73,15 @@ def gerar_midia_do_roteiro(roteiro: Roteiro) -> list[MidiaCena]:
 
         if MIDIA_TIPO == "video":
             caminho_base = pasta_episodio / f"cena_{indice:02d}_base.png"
-            kling.gerar_imagem(prompt_cena, caminho_base, imagem_referencia=referencia)
+            runway.gerar_imagem(prompt_cena, caminho_base, imagem_referencia=referencia)
             _redimensionar(caminho_base)
 
             caminho_video = pasta_episodio / f"cena_{indice:02d}.mp4"
-            kling.gerar_video_a_partir_de_imagem(prompt_cena, caminho_base, caminho_video)
+            runway.gerar_video_a_partir_de_imagem(prompt_cena, caminho_base, caminho_video)
             midia = MidiaCena(indice, personagem.nome, "video", caminho_video)
         else:
             caminho_imagem = pasta_episodio / f"cena_{indice:02d}.png"
-            kling.gerar_imagem(prompt_cena, caminho_imagem, imagem_referencia=referencia)
+            runway.gerar_imagem(prompt_cena, caminho_imagem, imagem_referencia=referencia)
             _redimensionar(caminho_imagem)
             midia = MidiaCena(indice, personagem.nome, "imagem", caminho_imagem)
 

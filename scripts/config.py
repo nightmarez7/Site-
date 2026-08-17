@@ -39,16 +39,19 @@ DURACAO_MAX_SEGUNDOS = 40
 LARGURA_VIDEO = 1080
 ALTURA_VIDEO = 1920
 
-# Etapa 2: geração de imagem/vídeo (provedor: Kling AI)
-KLING_ACCESS_KEY = os.getenv("KLING_ACCESS_KEY", "")
-KLING_SECRET_KEY = os.getenv("KLING_SECRET_KEY", "")
-# Endpoint internacional documentado pela Kling em 2025; confirme na sua conta antes de rodar em
-# produção, pois provedores de geração de mídia mudam host/versão de API com frequência.
-KLING_BASE_URL = os.getenv("KLING_BASE_URL", "https://api-singapore.klingai.com")
-KLING_MODEL_IMAGEM = os.getenv("KLING_MODEL_IMAGEM", "kling-v1-5")
-KLING_MODEL_VIDEO = os.getenv("KLING_MODEL_VIDEO", "kling-v1-6")
-KLING_POLL_INTERVALO_SEGUNDOS = int(os.getenv("KLING_POLL_INTERVALO_SEGUNDOS", "5"))
-KLING_POLL_TIMEOUT_SEGUNDOS = int(os.getenv("KLING_POLL_TIMEOUT_SEGUNDOS", "300"))
+# Etapa 2: geração de imagem/vídeo (provedor: Runway ML)
+RUNWAY_API_KEY = os.getenv("RUNWAY_API_KEY", "")
+RUNWAY_BASE_URL = os.getenv("RUNWAY_BASE_URL", "https://api.dev.runwayml.com/v1")
+RUNWAY_API_VERSION = os.getenv("RUNWAY_API_VERSION", "2024-11-06")
+RUNWAY_MODEL_IMAGEM = os.getenv("RUNWAY_MODEL_IMAGEM", "gen4_image")
+RUNWAY_MODEL_VIDEO = os.getenv("RUNWAY_MODEL_VIDEO", "gen4_turbo")
+# Strings de ratio são específicas de cada modelo Runway e mudam de tempos em tempos —
+# confirme os valores aceitos na doc atual da Runway antes de rodar em produção; dá pra
+# sobrescrever aqui via .env sem tocar no código caso a API rejeite o valor padrão.
+RUNWAY_RATIO_IMAGEM = os.getenv("RUNWAY_RATIO_IMAGEM", "1080:1920")
+RUNWAY_RATIO_VIDEO = os.getenv("RUNWAY_RATIO_VIDEO", "1080:1920")
+RUNWAY_POLL_INTERVALO_SEGUNDOS = int(os.getenv("RUNWAY_POLL_INTERVALO_SEGUNDOS", "5"))
+RUNWAY_POLL_TIMEOUT_SEGUNDOS = int(os.getenv("RUNWAY_POLL_TIMEOUT_SEGUNDOS", "300"))
 
 # "imagem": 1 imagem estática por cena (rápido/barato). "video": anima cada imagem em um clipe curto.
 MIDIA_TIPO = os.getenv("MIDIA_TIPO", "imagem")
